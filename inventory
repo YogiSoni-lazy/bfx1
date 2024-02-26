@@ -1,0 +1,8 @@
+[hashicorp_vault]
+servera
+
+[controller]
+controller.lab.example.com
+
+[client]
+serverb

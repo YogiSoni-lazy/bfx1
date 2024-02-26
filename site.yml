@@ -1,0 +1,6 @@
+---
+- name: Run a pre-check on the provided AAP2 selection
+  hosts: hashicorp_vault 
+  gather_facts: true
+  roles:
+    - hashicorp_vault
