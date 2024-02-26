@@ -10,7 +10,7 @@
 
 - name: Add vault public key to client SSH configuration
   ansible.builtin.get_url:
-    url: https://servera:8200/v1/ssh-client-signer/public_key
+    url: https://servera.lab.example.com:8200/v1/ssh-client-signer/public_key
     dest: /etc/ssh/trusted-user-ca-keys.pem
     validate_certs: false
     owner: root

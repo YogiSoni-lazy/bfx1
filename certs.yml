@@ -1,0 +1,42 @@
+---
+- name: Configure HashiCorp Vault for Breakfix1
+  hosts: hashicorp_vault
+  become: true
+  gather_facts: false
+  vars:
+    aap_host: "controller.lab.example.com"
+    aap_user: "admin"
+    aap_password: "redhat"
+    vault_host: "servera"
+    hashicorp_vault_home_dir: /opt/vault/
+    hashicorp_vault_data_dir: /opt/vault/data/
+    hashicorp_vault_ssl_dir: /opt/vault/tls/
+  tasks:
+    - name: Create private key (RSA, 4096 bits)
+      community.crypto.openssl_privatekey:
+        path: "{{ hashicorp_vault_ssl_dir }}/vault_ca.key"
+        owner: root
+        group: vault
+        mode: 0640
+
+    - name: Create certificate signing request (CSR) for self-signed certificate
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ hashicorp_vault_ssl_dir }}/vault_ca.key"
+        common_name: "servera.lab.example.com"
+        organization_name: "{{ org_name | default('Red Hat') }}"
+        subject_alt_name:
+          - "DNS:servera.lab.example.com"
+          - "DNS:secret.lab.example.com"
+          - "DNS:servera"
+          - "DNS:127.0.0.1"
+      register: csr
+
+    - name: Create self-signed certificate from CSR
+      community.crypto.x509_certificate:
+        path: "{{ hashicorp_vault_ssl_dir }}/vault_ca.pem"
+        csr_content: "{{ csr['csr'] }}"
+        privatekey_path: "{{ hashicorp_vault_ssl_dir }}/vault_ca.key"
+        provider: selfsigned
+        owner: root
+        group: vault
+        mode: 0644

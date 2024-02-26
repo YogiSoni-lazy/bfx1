@@ -42,6 +42,7 @@
     subject_alt_name:
       - "DNS:{{ ansible_fqdn }}"
       - "DNS:secret.{{ ansible_domain }}"
+      - "DNS:servera"
       - "IP:127.0.0.1"
   register: csr
 

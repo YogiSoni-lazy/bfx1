@@ -1,0 +1,3 @@
+---
+- name: Certs
+  ansible.builtin.import_playbook: certs.yml
